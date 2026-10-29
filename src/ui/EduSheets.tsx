@@ -10,6 +10,7 @@ import { toUniverData } from "../core/univer-data.ts"
 import { buildWorkbook, type WorkbookState } from "../core/workbook.ts"
 import type { Scenario } from "../scenarios/types.ts"
 import { UK_LOCALE, ukLocales } from "./locale/index.ts"
+import { watchBodyPortals } from "./body-portals.ts"
 import { TaskPanel } from "./TaskPanel.tsx"
 import { isTouchDevice, keepKeyboardForEditing } from "./touch-keyboard.ts"
 import { fixUkrainianInput, readWorkbook, type SheetsAPI } from "./univer-bridge.ts"
@@ -67,6 +68,7 @@ export const EduSheets = ({ scenario, onCheck, onChange, initialWorkbook, selfCh
     const container = document.createElement("div")
     container.className = "es-univer"
     host.current.append(container)
+    const portals = watchBodyPortals()
     const { univer, univerAPI } = createUniver({
       locale: UK_LOCALE,
       locales: ukLocales,
@@ -114,6 +116,7 @@ export const EduSheets = ({ scenario, onCheck, onChange, initialWorkbook, selfCh
       api.current = null
       // Univer renders with its own React root; unmounting it while this page renders breaks React.
       setTimeout(() => {
+        portals.restore()
         univer.dispose()
         container.remove()
       }, 0)
