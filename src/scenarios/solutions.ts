@@ -1,4 +1,5 @@
-import type { CellInput } from "../core/workbook.ts"
+import { buildWorkbook, type CellInput, type CellStyle, type WorkbookState, withInputs } from "../core/workbook.ts"
+import type { Scenario } from "./types.ts"
 
 /** What a student types to solve each scenario (first sheet), by scenario id. Tests check that it meets every goal. */
 export const referenceInputs: Readonly<Record<string, Readonly<Record<string, CellInput>>>> = {
@@ -36,4 +37,23 @@ export const referenceInputs: Readonly<Record<string, Readonly<Record<string, Ce
     B7: "8-Б",
     C7: 158
   }
+}
+
+/** Formatting and widths a solution needs besides the typed inputs, by scenario id. */
+const referenceFormatting: Readonly<Record<string, { readonly styles: Readonly<Record<string, CellStyle>>; readonly widths: Readonly<Record<string, number>> }>> = {
+  "g6-reading-marathon": {
+    styles: Object.fromEntries(["A1", "B1", "C1"].map((a) => [a, { bold: true, fill: "#fff2cc", align: "center" }])),
+    widths: { B: 300 }
+  }
+}
+
+/** The table a student hands in when they solve the scenario: an example answer for authors and tests. */
+export const referenceWorkbook = (scenario: Scenario): WorkbookState => {
+  const book = withInputs(buildWorkbook(scenario.start), undefined, referenceInputs[scenario.id] ?? {})
+  const extra = referenceFormatting[scenario.id]
+  const [first, ...rest] = book.sheets
+  if (extra === undefined || first === undefined) return book
+  const cells = { ...first.cells }
+  for (const [address, style] of Object.entries(extra.styles)) cells[address] = { input: cells[address]?.input ?? "", style: { ...cells[address]?.style, ...style } }
+  return { sheets: [{ ...first, cells, widths: { ...first.widths, ...extra.widths } }, ...rest] }
 }

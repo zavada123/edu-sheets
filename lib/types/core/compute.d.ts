@@ -7,6 +7,6 @@ export interface Computed {
 }
 /**
  * Computes every formula of the workbook with the Univer formula engine, without a page.
- * The same engine computes the table the student sees, so the results match.
+ * The engine loads on the first call, so a page that only shows tasks or edits them does not download it.
  */
 export declare const compute: (workbook: WorkbookState) => Promise<Computed>;

@@ -1,4 +1,4 @@
-import { type IStyleData, type IWorkbookData } from "@univerjs/core";
+import type { IStyleData, IWorkbookData } from "@univerjs/core";
 import { type CellStyle, type WorkbookState } from "./workbook.ts";
 export declare const styleToUniver: (style: CellStyle) => IStyleData;
 /** Univer writes colors as `#RGB`, `#RRGGBB` or `rgb(r,g,b)`; goals compare `#rrggbb`. */

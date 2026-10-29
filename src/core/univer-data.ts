@@ -1,6 +1,12 @@
-import { BooleanNumber, CellValueType, HorizontalAlign, type ICellData, type IStyleData, type IWorkbookData, WrapStrategy } from "@univerjs/core"
+import type { ICellData, IStyleData, IWorkbookData } from "@univerjs/core"
 import { colIndex, parseCell } from "./address.ts"
 import { type CellInput, type CellStyle, isFormula, type WorkbookState } from "./workbook.ts"
+
+// Values of Univer enums, written here so that this module does not load Univer itself.
+const BooleanNumber = { TRUE: 1 } as const
+const CellValueType = { STRING: 1, NUMBER: 2, BOOLEAN: 3 } as const
+const HorizontalAlign = { LEFT: 1, CENTER: 2, RIGHT: 3 } as const
+const WrapStrategy = { WRAP: 3 } as const
 
 /** Default Univer sizes: the grid the student sees at the start. */
 const ROWS = 100
