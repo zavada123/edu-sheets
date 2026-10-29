@@ -43,7 +43,8 @@
     "@univerjs/preset-sheets-sort": "1.2.0",
     "@univerjs/presets": "1.2.0",
     "@univerjs/sheets": "1.2.0",
-    "@univerjs/sheets-formula": "1.2.0"
+    "@univerjs/sheets-formula": "1.2.0",
+    "rxjs": "7.8.2"
   },
   "devDependencies": {
     "@types/react": "^19.2.17",
