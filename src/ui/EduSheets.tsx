@@ -82,9 +82,17 @@ export const EduSheets = ({ scenario, onCheck, onChange, initialWorkbook, selfCh
     api.current = univerAPI
 
     let timer: ReturnType<typeof setTimeout> | undefined
+    // Univer runs some mutations of its own while it starts; the page hears only about real changes of the table.
+    let last = JSON.stringify(readWorkbook(univerAPI))
     const report = () => {
       clearTimeout(timer)
-      timer = setTimeout(() => changed.current?.(readWorkbook(univerAPI)), CHANGE_DELAY_MS)
+      timer = setTimeout(() => {
+        const table = readWorkbook(univerAPI)
+        const text = JSON.stringify(table)
+        if (text === last) return
+        last = text
+        changed.current?.(table)
+      }, CHANGE_DELAY_MS)
     }
     const onCommand = univerAPI.addEvent(univerAPI.Event.CommandExecuted, (event) => {
       if (event.type !== CommandType.MUTATION) return
