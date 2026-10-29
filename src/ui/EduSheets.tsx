@@ -11,6 +11,7 @@ import { buildWorkbook, type WorkbookState } from "../core/workbook.ts"
 import type { Scenario } from "../scenarios/types.ts"
 import { UK_LOCALE, ukLocales } from "./locale/index.ts"
 import { TaskPanel } from "./TaskPanel.tsx"
+import { isTouchDevice, keepKeyboardForEditing } from "./touch-keyboard.ts"
 import { fixUkrainianInput, readWorkbook, type SheetsAPI } from "./univer-bridge.ts"
 import "@univerjs/preset-sheets-core/lib/index.css"
 import "@univerjs/preset-sheets-sort/lib/index.css"
@@ -96,10 +97,12 @@ export const EduSheets = ({ scenario, onCheck, onChange, initialWorkbook, selfCh
       // After Univer has written the cell: a change inside the edit would be overwritten.
       setTimeout(() => fixUkrainianInput(univerAPI, sheetId, event.row, event.column), 0)
     })
+    const keyboard = isTouchDevice() ? keepKeyboardForEditing(univerAPI, container) : null
     return () => {
       clearTimeout(timer)
       onCommand.dispose()
       onEditEnd.dispose()
+      keyboard?.dispose()
       api.current = null
       // Univer renders with its own React root; unmounting it while this page renders breaks React.
       setTimeout(() => {

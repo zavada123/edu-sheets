@@ -188,4 +188,18 @@
     display: none;
   }
 }
+
+/* Only a touch screen needs to know that a double tap opens the keyboard. */
+.es-touch-hint {
+  display: none;
+  margin: 0 0 12px;
+  font-size: 13px;
+  color: #5f6368;
+}
+
+@media (pointer: coarse) {
+  .es-touch-hint {
+    display: block;
+  }
+}
 /*$vite$:1*/

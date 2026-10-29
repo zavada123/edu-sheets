@@ -32,6 +32,7 @@ export const TaskPanel = ({ scenario, results, open, checking, selfCheck, onTogg
               <li key={step}>{step}</li>
             ))}
           </ol>
+          <p className="es-touch-hint">На телефоні: торкнися клітинки, щоб вибрати її, і двічі, щоб уводити текст.</p>
           <div className="es-task-actions">
             {selfCheck && (
               <button type="button" className="es-check" onClick={onCheck} disabled={checking}>
