@@ -1,0 +1,70 @@
+{
+  "name": "edu-sheets",
+  "version": "0.1.0",
+  "description": "Навчальний тренажер електронних таблиць у стилі Google Sheets для 6–9 класу",
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "build:lib": "vite build -c vite.lib.config.ts && tsc -p tsconfig.lib.json",
+    "preview": "vite preview",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zavada123/edu-sheets.git"
+  },
+  "files": [
+    "lib"
+  ],
+  "sideEffects": [
+    "**/*.css",
+    "./lib/react.js"
+  ],
+  "exports": {
+    "./core": {
+      "types": "./lib/types/core.d.ts",
+      "import": "./lib/core.js"
+    },
+    "./react": {
+      "types": "./lib/types/react.d.ts",
+      "import": "./lib/react.js"
+    },
+    "./style.css": "./lib/style.css"
+  },
+  "dependencies": {
+    "@univerjs/core": "1.2.0",
+    "@univerjs/engine-formula": "1.2.0",
+    "@univerjs/preset-sheets-conditional-formatting": "1.2.0",
+    "@univerjs/preset-sheets-core": "1.2.0",
+    "@univerjs/preset-sheets-filter": "1.2.0",
+    "@univerjs/preset-sheets-sort": "1.2.0",
+    "@univerjs/presets": "1.2.0",
+    "@univerjs/sheets": "1.2.0",
+    "@univerjs/sheets-formula": "1.2.0"
+  },
+  "devDependencies": {
+    "@types/react": "^19.2.17",
+    "@types/react-dom": "^19.2.7",
+    "@vitejs/plugin-react": "^6.1.1",
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8",
+    "typescript": "^6.0.3",
+    "vite": "^8.3.5",
+    "vitest": "^5.0.5"
+  },
+  "peerDependencies": {
+    "react": ">=19",
+    "react-dom": ">=19"
+  },
+  "peerDependenciesMeta": {
+    "react": {
+      "optional": true
+    },
+    "react-dom": {
+      "optional": true
+    }
+  }
+}

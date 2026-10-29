@@ -1,0 +1,190 @@
+/* Trainer frame. Univer draws the table itself; all our classes start with `es-` so the trainer can live inside any page. */
+
+.es-root {
+  --es-accent: #1a73e8;
+  --es-text: #1f1f1f;
+  --es-muted: #5f6368;
+  --es-line: #dadce0;
+  --es-ok: #188038;
+  --es-bad: #c5221f;
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 520px;
+  font:
+    14px / 1.4 "Google Sans",
+    Roboto,
+    system-ui,
+    -apple-system,
+    "Segoe UI",
+    sans-serif;
+  color: var(--es-text);
+  background: #fff;
+  container-type: inline-size;
+}
+
+.es-body {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.es-univer {
+  position: absolute;
+  inset: 0;
+}
+
+.es-root button {
+  font: inherit;
+}
+
+.es-sheet {
+  position: relative;
+  flex: 1;
+  min-height: 360px;
+}
+
+.es-task {
+  flex: none;
+  max-height: 45%;
+  overflow: auto;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--es-line);
+  background: #f8fafd;
+}
+
+.es-task-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.es-task-head h2 {
+  flex: 1;
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.es-grade {
+  padding: 2px 8px;
+  border-radius: 10px;
+  background: #e8f0fe;
+  color: var(--es-accent);
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.es-task-toggle {
+  width: 32px;
+  height: 32px;
+  border: none;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--es-muted);
+  cursor: pointer;
+}
+
+.es-task-toggle:hover {
+  background: #e8eaed;
+}
+
+.es-task-steps {
+  margin: 8px 0;
+  padding-left: 22px;
+}
+
+.es-task-steps li + li {
+  margin-top: 4px;
+}
+
+.es-task-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.es-check,
+.es-reset {
+  min-height: 36px;
+  padding: 0 18px;
+  border-radius: 18px;
+  cursor: pointer;
+}
+
+.es-check {
+  border: none;
+  background: var(--es-accent);
+  color: #fff;
+  font-weight: 600;
+}
+
+.es-check:disabled {
+  opacity: 0.6;
+  cursor: progress;
+}
+
+.es-reset {
+  border: 1px solid var(--es-line);
+  background: #fff;
+  color: var(--es-accent);
+}
+
+.es-results {
+  margin-top: 10px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  background: #fff;
+  border: 1px solid var(--es-line);
+}
+
+.es-results.is-solved {
+  border-color: var(--es-ok);
+  background: #e6f4ea;
+}
+
+.es-results-head {
+  margin: 0 0 4px;
+  font-weight: 600;
+}
+
+.es-results ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.es-results li {
+  padding: 2px 0;
+}
+
+.es-results small {
+  display: block;
+  margin-left: 22px;
+  color: var(--es-bad);
+}
+
+/* Wide screens: the task on the left, the table on the right, like a side panel in Google Sheets. */
+@container (min-width: 900px) {
+  .es-body {
+    flex-direction: row;
+  }
+
+  .es-task {
+    order: -1;
+    width: 300px;
+    max-height: none;
+    border-bottom: none;
+    border-right: 1px solid var(--es-line);
+  }
+
+  .es-task:not(.is-open) {
+    width: auto;
+  }
+
+  .es-task:not(.is-open) h2,
+  .es-task:not(.is-open) .es-grade {
+    display: none;
+  }
+}
