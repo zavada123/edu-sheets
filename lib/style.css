@@ -90,9 +90,11 @@
   background: #e8eaed;
 }
 
+/* Pages with a CSS reset (Tailwind) take the numbers off lists; the steps keep them. */
 .es-task-steps {
   margin: 8px 0;
   padding-left: 22px;
+  list-style: decimal;
 }
 
 .es-task-steps li + li {
