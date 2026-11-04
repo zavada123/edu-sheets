@@ -135,9 +135,9 @@ export const EduSheets = ({ scenario, onCheck, onChange, initialWorkbook, selfCh
       setTimeout(() => {
         portals.restore()
         univer.dispose()
+        container.remove()
         // Popups that were open (a tooltip under the mouse, a menu) must not stay over the next exercise.
         portals.clear()
-        container.remove()
       }, 0)
     }
   }, [scenario, round])

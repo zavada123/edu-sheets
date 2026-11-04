@@ -4,9 +4,18 @@
  * clears the body before (a test runner between stories, for example) makes Univer's own removal throw.
  *
  * This keeps the `div`s one Univer added: `stop` ends the watch (before the next Univer starts, so its `div`s are not
- * taken), `restore` puts back the ones someone removed right before Univer is disposed, and `clear` removes what is
+ * taken), `restore` puts back the ones someone removed right before Univer is disposed, and `clear` removes Univer's popups
  * left after it.
  */
+const UNIVER_CLASS = /(^|\s)univer-/
+
+/**
+ * A popup layer of Univer: it or its first child has Univer's classes, and it holds no trainer. Other `div`s the page
+ * added to the body meanwhile (its own dialogs, a test runner's story root) stay.
+ */
+const isUniverPopup = (node: Element): boolean =>
+  (UNIVER_CLASS.test(node.className) || UNIVER_CLASS.test(node.firstElementChild?.className ?? "")) && node.querySelector(".es-root") === null
+
 export const watchBodyPortals = (): { readonly stop: () => void; readonly restore: () => void; readonly clear: () => void } => {
   const added = new Set<Element>()
   const note = (records: ReadonlyArray<MutationRecord>) => {
@@ -25,7 +34,7 @@ export const watchBodyPortals = (): { readonly stop: () => void; readonly restor
       for (const node of added) if (!node.isConnected) document.body.append(node)
     },
     clear: () => {
-      for (const node of added) node.remove()
+      for (const node of added) if (isUniverPopup(node)) node.remove()
       added.clear()
     }
   }
