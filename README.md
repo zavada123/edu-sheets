@@ -41,6 +41,8 @@ The spreadsheet is rendered by [Univer](https://github.com/dream-num/univer) (Ap
 - **Formatting:** font, bold, italic, text and fill colour, borders, alignment, wrapping, merging, number formats, column widths.
 - **Data tools:** multi-level sorting, filters and conditional formatting.
 - **Ukrainian UI** with the same terms as Ukrainian Excel.
+- **Full screen:** one button opens the trainer over the whole screen, on iPhone too; Esc leaves it.
+- **Exercise catalog:** `TaskCatalog` shows the exercises as cards grouped by grade, with the topic, skills, solved marks and progress.
 - **Works on desktops, tablets and phones.**
 - **Tamper-proof grading:** the server recalculates every formula with the same Univer engine instead of trusting values from the page.
 
@@ -117,7 +119,7 @@ The server computes every formula itself with the same Univer engine, so it neve
 
 | Entry point | Contents |
 |---|---|
-| `edu-sheets/react` | The `EduSheets` component |
+| `edu-sheets/react` | The `EduSheets` component, the `TaskCatalog` of exercises and `nextScenario` |
 | `edu-sheets/core` | Workbook model, `compute`, goals (`checkGoals`, `describeGoal`), `grade`, `LIMITS` and the built-in `scenarios`. No React and no page, safe for Node |
 | `edu-sheets/style.css` | Styles for the component |
 
@@ -125,11 +127,21 @@ The server computes every formula itself with the same Univer engine, so it neve
 
 | Prop | Type | Description |
 |---|---|---|
-| `scenario` | `Scenario` | The task. To show another one, change the component `key` |
+| `scenario` | `Scenario` | The task. Another one rebuilds the table and keeps the full screen; a new `key` starts the trainer afresh |
 | `onCheck` | `(solved: boolean) => void` | Called after every check |
 | `onChange` | `(workbook: WorkbookState) => void` | The whole table, every time the student changes it |
 | `initialWorkbook` | `WorkbookState` | A previously saved table: the trainer starts from it instead of the scenario start |
 | `selfCheck` | `boolean` | `false` hides the Check button when your site grades the answer. Default `true` |
+| `onNext` | `() => void` | Shows «Наступна вправа» after a solved check |
+
+### `<TaskCatalog>` props
+
+| Prop | Type | Description |
+|---|---|---|
+| `scenarios` | `Scenario[]` | Exercises; cards are grouped by `grade`, and `topic`, `summary` and `skills` fill each card |
+| `solved` | `string[]` | Ids of solved exercises |
+| `current` | `string` | The open exercise |
+| `onPick` | `(id: string) => void` | Called when a card is clicked |
 
 ### Goals
 

@@ -6,7 +6,10 @@ import "@univerjs/preset-sheets-filter/lib/index.css";
 import "@univerjs/preset-sheets-conditional-formatting/lib/index.css";
 import "./sheets.css";
 interface Props {
-    /** To show another scenario, give the component a new `key`, for example the scenario id. */
+    /**
+     * Another scenario builds the table again from its start. A page that keeps the trainer for the next exercise keeps
+     * its full screen too; a new `key` starts the trainer afresh.
+     */
     readonly scenario: Scenario;
     /** Called after every check; `solved` is true when all conditions are met. */
     readonly onCheck?: (solved: boolean) => void;
@@ -19,7 +22,9 @@ interface Props {
     readonly initialWorkbook?: WorkbookState;
     /** `false` hides «Перевірити» when the page checks the answer itself. */
     readonly selfCheck?: boolean;
+    /** Opens the next exercise: after a solved check the task card shows «Наступна вправа». */
+    readonly onNext?: (() => void) | undefined;
 }
 /** The spreadsheet trainer for one scenario. Can be embedded into any React page. */
-export declare const EduSheets: ({ scenario, onCheck, onChange, initialWorkbook, selfCheck }: Props) => import("react").JSX.Element;
+export declare const EduSheets: ({ scenario, onCheck, onChange, initialWorkbook, selfCheck, onNext }: Props) => import("react").JSX.Element;
 export {};
