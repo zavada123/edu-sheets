@@ -183,6 +183,10 @@
     width: auto;
   }
 
+  .es-task:not(.is-open) .es-task-head {
+    flex-direction: column-reverse;
+  }
+
   .es-task:not(.is-open) h2,
   .es-task:not(.is-open) .es-grade {
     display: none;
@@ -201,4 +205,57 @@
   .es-touch-hint {
     display: block;
   }
+}
+
+/* Full screen: the trainer covers the page; see fullscreen.ts. Below Univer's popups (z-index 1000 and more). */
+.es-full-btn {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border: 1px solid var(--es-line);
+  border-radius: 8px;
+  background: #fff;
+  color: var(--es-muted);
+  cursor: pointer;
+}
+
+.es-full-btn:hover,
+.es-full-btn[aria-pressed="true"] {
+  border-color: var(--es-accent);
+  color: var(--es-accent);
+}
+
+.es-root.es-full {
+  position: fixed;
+  inset: 0;
+  z-index: 900;
+  width: auto;
+  height: auto;
+  min-height: 0;
+  border-radius: 0;
+}
+
+/* The page under the trainer does not scroll. A page that keeps space for the scrollbar (scrollbar-gutter: stable)
+   would show that space as a white strip at the right edge, so the full screen gives it up. */
+html.es-page-full,
+html.es-page-full body {
+  overflow: hidden;
+}
+
+html.es-page-full {
+  scrollbar-gutter: auto;
+}
+
+.es-next {
+  min-height: 36px;
+  margin-top: 8px;
+  padding: 0 18px;
+  border: none;
+  border-radius: 18px;
+  background: var(--es-ok);
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
 }

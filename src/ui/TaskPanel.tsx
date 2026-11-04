@@ -7,13 +7,22 @@ interface Props {
   readonly open: boolean
   readonly checking: boolean
   readonly selfCheck: boolean
+  readonly full: boolean
+  readonly onToggleFull: () => void
+  readonly onNext: (() => void) | undefined
   readonly onToggle: () => void
   readonly onCheck: () => void
   readonly onReset: () => void
 }
 
+const ExpandIcon = ({ full }: { readonly full: boolean }) => (
+  <svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    {full ? <path d="M8 3v5H3M12 3v5h5M8 17v-5H3M12 17v-5h5" /> : <path d="M3 8V3h5M17 8V3h-5M3 12v5h5M17 12v5h-5" />}
+  </svg>
+)
+
 /** The task card: what to do, the "Перевірити" button and the result of each condition. */
-export const TaskPanel = ({ scenario, results, open, checking, selfCheck, onToggle, onCheck, onReset }: Props) => {
+export const TaskPanel = ({ scenario, results, open, checking, selfCheck, full, onToggleFull, onNext, onToggle, onCheck, onReset }: Props) => {
   const solved = results !== null && results.length > 0 && results.every((r) => r.ok)
   // Not a landmark (aside, header): a page can show several trainers, and their landmarks would have the same name.
   return (
@@ -21,6 +30,16 @@ export const TaskPanel = ({ scenario, results, open, checking, selfCheck, onTogg
       <div className="es-task-head">
         {scenario.grade > 0 && <span className="es-grade">{scenario.grade} клас</span>}
         <h2>{scenario.title}</h2>
+        <button
+          type="button"
+          className="es-full-btn"
+          aria-pressed={full}
+          aria-label={full ? "Вийти з повного екрана" : "На весь екран"}
+          title={full ? "Вийти з повного екрана (Esc)" : "На весь екран"}
+          onClick={onToggleFull}
+        >
+          <ExpandIcon full={full} />
+        </button>
         <button type="button" className="es-task-toggle" aria-expanded={open} aria-label={open ? "Сховати завдання" : "Показати завдання"} onClick={onToggle}>
           {open ? "▴" : "▾"}
         </button>
@@ -54,6 +73,11 @@ export const TaskPanel = ({ scenario, results, open, checking, selfCheck, onTogg
                   </li>
                 ))}
               </ul>
+              {solved && onNext !== undefined && (
+                <button type="button" className="es-next" onClick={onNext}>
+                  Наступна вправа →
+                </button>
+              )}
             </div>
           )}
         </>

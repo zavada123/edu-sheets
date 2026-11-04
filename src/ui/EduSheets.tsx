@@ -11,6 +11,7 @@ import { buildWorkbook, type WorkbookState } from "../core/workbook.ts"
 import type { Scenario } from "../scenarios/types.ts"
 import { UK_LOCALE, ukLocales } from "./locale/index.ts"
 import { watchBodyPortals } from "./body-portals.ts"
+import { useFullScreen } from "./fullscreen.ts"
 import { TaskPanel } from "./TaskPanel.tsx"
 import { isTouchDevice, keepKeyboardForEditing } from "./touch-keyboard.ts"
 import { fixUkrainianInput, readWorkbook, type SheetsAPI } from "./univer-bridge.ts"
@@ -30,7 +31,10 @@ const HIDDEN_MENUS = {
 const CHANGE_DELAY_MS = 400
 
 interface Props {
-  /** To show another scenario, give the component a new `key`, for example the scenario id. */
+  /**
+   * Another scenario builds the table again from its start. A page that keeps the trainer for the next exercise keeps
+   * its full screen too; a new `key` starts the trainer afresh.
+   */
   readonly scenario: Scenario
   /** Called after every check; `solved` is true when all conditions are met. */
   readonly onCheck?: (solved: boolean) => void
@@ -43,10 +47,12 @@ interface Props {
   readonly initialWorkbook?: WorkbookState
   /** `false` hides «Перевірити» when the page checks the answer itself. */
   readonly selfCheck?: boolean
+  /** Opens the next exercise: after a solved check the task card shows «Наступна вправа». */
+  readonly onNext?: (() => void) | undefined
 }
 
 /** The spreadsheet trainer for one scenario. Can be embedded into any React page. */
-export const EduSheets = ({ scenario, onCheck, onChange, initialWorkbook, selfCheck = true }: Props) => {
+export const EduSheets = ({ scenario, onCheck, onChange, initialWorkbook, selfCheck = true, onNext }: Props) => {
   const host = useRef<HTMLDivElement>(null)
   const api = useRef<SheetsAPI | null>(null)
   const [results, setResults] = useState<ReadonlyArray<GoalResult> | null>(null)
@@ -54,13 +60,22 @@ export const EduSheets = ({ scenario, onCheck, onChange, initialWorkbook, selfCh
   const [taskOpen, setTaskOpen] = useState(true)
   // A new value builds the table again from the scenario start («Почати спочатку»).
   const [round, setRound] = useState(0)
+  const { full, toggle: toggleFull } = useFullScreen()
+  // Another exercise: the results of the old one go, and its task opens.
+  const [shown, setShown] = useState(scenario.id)
+  if (shown !== scenario.id) {
+    setShown(scenario.id)
+    setResults(null)
+    setTaskOpen(true)
+  }
 
   // Refs, so a new callback on every render of the page does not rebuild the table.
   const changed = useRef(onChange)
   changed.current = onChange
   const checked = useRef(onCheck)
   checked.current = onCheck
-  const initial = useRef(initialWorkbook)
+  // The saved table belongs to the first scenario only.
+  const initial = useRef({ id: scenario.id, table: initialWorkbook })
 
   useEffect(() => {
     if (host.current === null) return
@@ -79,7 +94,8 @@ export const EduSheets = ({ scenario, onCheck, onChange, initialWorkbook, selfCh
         UniverSheetsConditionalFormattingPreset()
       ]
     })
-    const start = round === 0 && initial.current !== undefined ? initial.current : buildWorkbook(scenario.start)
+    const saved = round === 0 && initial.current.id === scenario.id ? initial.current.table : undefined
+    const start = saved ?? buildWorkbook(scenario.start)
     univerAPI.createWorkbook(toUniverData(start))
     api.current = univerAPI
 
@@ -114,10 +130,13 @@ export const EduSheets = ({ scenario, onCheck, onChange, initialWorkbook, selfCh
       onEditEnd.dispose()
       keyboard?.dispose()
       api.current = null
+      portals.stop()
       // Univer renders with its own React root; unmounting it while this page renders breaks React.
       setTimeout(() => {
         portals.restore()
         univer.dispose()
+        // Popups that were open (a tooltip under the mouse, a menu) must not stay over the next exercise.
+        portals.clear()
         container.remove()
       }, 0)
     }
@@ -142,7 +161,7 @@ export const EduSheets = ({ scenario, onCheck, onChange, initialWorkbook, selfCh
   }, [])
 
   return (
-    <div className="es-root">
+    <div className={`es-root${full ? " es-full" : ""}`}>
       <div className="es-body">
         <TaskPanel
           scenario={scenario}
@@ -150,6 +169,9 @@ export const EduSheets = ({ scenario, onCheck, onChange, initialWorkbook, selfCh
           open={taskOpen}
           checking={checking}
           selfCheck={selfCheck}
+          full={full}
+          onToggleFull={toggleFull}
+          onNext={onNext}
           onToggle={() => setTaskOpen((v) => !v)}
           onCheck={() => void check()}
           onReset={reset}
