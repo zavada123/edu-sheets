@@ -261,6 +261,117 @@ html.es-page-full {
   font-weight: 600;
   cursor: pointer;
 }
+
+/* Guide: the steps in the task card, and the shade over the sheet with the lit target (see guide/GuideLayer.tsx).
+   The shade is over Univer's menus (z-index 1000 and more) and over the full screen (900), so a button in a menu is lit. */
+.es-task {
+  position: relative;
+}
+
+.es-guide-steps {
+  margin: 8px 0;
+  padding: 0;
+  list-style: none;
+}
+
+.es-guide-steps li {
+  display: flex;
+  gap: 8px;
+  padding: 6px 8px;
+  border-radius: 8px;
+  color: var(--es-muted);
+}
+
+.es-guide-steps li + li {
+  margin-top: 2px;
+}
+
+.es-guide-steps li.is-current {
+  background: #e8f0fe;
+  color: var(--es-text);
+  font-weight: 600;
+  box-shadow: inset 3px 0 0 var(--es-accent);
+}
+
+.es-guide-steps li.is-done {
+  color: var(--es-ok);
+}
+
+.es-guide-mark {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 1px solid currentcolor;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.es-guide-steps li.is-current .es-guide-mark {
+  border-color: var(--es-accent);
+  background: var(--es-accent);
+  color: #fff;
+}
+
+.es-guide-steps li.is-done .es-guide-mark {
+  border-color: var(--es-ok);
+  background: var(--es-ok);
+  color: #fff;
+}
+
+/* A phone has little room above the table: only the current step is shown. */
+@container (max-width: 899px) {
+  .es-guide-steps li:not(.is-current) {
+    display: none;
+  }
+}
+
+.es-guide-status {
+  margin: 0 0 10px;
+  font-size: 13px;
+  color: var(--es-muted);
+}
+
+.es-guide-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 1100;
+  pointer-events: none;
+}
+
+.es-guide-shade {
+  position: fixed;
+  overflow: hidden;
+}
+
+.es-guide-hole {
+  position: absolute;
+  box-sizing: border-box;
+  border: 3px solid #fbbc04;
+  border-radius: 8px;
+  box-shadow: 0 0 0 200vmax rgb(32 33 36 / 45%);
+  animation: es-guide-pulse 1.4s ease-in-out infinite;
+  transition:
+    left 0.2s,
+    top 0.2s,
+    width 0.2s,
+    height 0.2s;
+}
+
+@keyframes es-guide-pulse {
+  50% {
+    border-color: #fde293;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .es-guide-hole {
+    animation: none;
+    transition: none;
+  }
+}
 /* Catalog of exercises: cards grouped by grade. Classes start with `es-cat-` so the catalog can live inside any page. */
 
 .es-cat {

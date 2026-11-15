@@ -12,7 +12,11 @@ interface Props {
     readonly onToggle: () => void;
     readonly onCheck: () => void;
     readonly onReset: () => void;
+    /** The step the guide is on; the card shows the guide while it is on. */
+    readonly guideStep: number;
+    readonly guideOn: boolean;
+    readonly onToggleGuide: () => void;
 }
 /** The task card: what to do, the "Перевірити" button and the result of each condition. */
-export declare const TaskPanel: ({ scenario, results, open, checking, selfCheck, full, onToggleFull, onNext, onToggle, onCheck, onReset }: Props) => import("react").JSX.Element;
+export declare const TaskPanel: ({ scenario, results, open, checking, selfCheck, full, onToggleFull, onNext, onToggle, onCheck, onReset, guideStep, guideOn, onToggleGuide }: Props) => import("react").JSX.Element;
 export {};

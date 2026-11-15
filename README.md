@@ -42,6 +42,7 @@ The spreadsheet is rendered by [Univer](https://github.com/dream-num/univer) (Ap
 - **Data tools:** multi-level sorting, filters and conditional formatting.
 - **Ukrainian UI** with the same terms as Ukrainian Excel.
 - **Full screen:** one button opens the trainer over the whole screen, on iPhone too; Esc leaves it.
+- **Guides with shading:** step-by-step help that lights the next button or cells, shades the rest and turns off the buttons the step does not need.
 - **Exercise catalog:** `TaskCatalog` shows the exercises as cards grouped by grade, with the topic, skills, solved marks and progress.
 - **Works on desktops, tablets and phones.**
 - **Tamper-proof grading:** the server recalculates every formula with the same Univer engine instead of trusting values from the page.
@@ -157,6 +158,30 @@ Values are the computed ones: a formula counts by its result. Every goal has def
 | `sorted` | The rows of a range are ordered by a column and kept intact (each name stays with its result) |
 | `width` | The column is at least `min` pixels wide |
 | `sheet` | A sheet with this name exists |
+
+### Guides
+
+A scenario may carry a `guide`: steps the student walks through one by one. While a step runs, the sheet is shaded except its target, the target is lit, and every ribbon button the step does not need is grey and does nothing (its keyboard shortcut and context-menu item too). Undo and redo always work. The student can press «Без підказок» to turn the guide off and solve the task freely; the goals are checked either way.
+
+```ts
+guide: [
+  { text: "Виділи заголовки A1:C1.", target: { cells: "A1:C1" }, done: { select: "A1:C1" } },
+  {
+    text: "Натисни кнопку «Жирний» (Ж).",
+    target: { command: "sheet.command.set-range-bold" },
+    done: { goal: { type: "style", cells: "A1:C1", style: { bold: true } } }
+  }
+]
+```
+
+| Field | Meaning |
+|---|---|
+| `text` | What the student reads in the task card |
+| `target` | What is lit: `{ command }` a ribbon button by its Univer command id (a button hidden behind «⋮» lights «⋮» first, an open list lights with its button), `{ cells }` a range, `{ tab }` a ribbon tab by its name |
+| `open` | More commands that work in this step: exact ids or prefixes ending in `*` |
+| `done` | When the step is done: `{ command }` it ran, `{ select }` the selection is this range, `{ tab }` this tab is open, `{ goal }` a goal from the list above is met |
+
+The command id of a button is its `data-u-command` attribute in the page.
 
 ## Development
 

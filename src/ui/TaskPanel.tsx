@@ -1,5 +1,6 @@
 import type { GoalResult } from "../core/goals.ts"
 import type { Scenario } from "../scenarios/types.ts"
+import { GuideSteps } from "./guide/GuideSteps.tsx"
 
 interface Props {
   readonly scenario: Scenario
@@ -13,6 +14,10 @@ interface Props {
   readonly onToggle: () => void
   readonly onCheck: () => void
   readonly onReset: () => void
+  /** The step the guide is on; the card shows the guide while it is on. */
+  readonly guideStep: number
+  readonly guideOn: boolean
+  readonly onToggleGuide: () => void
 }
 
 const ExpandIcon = ({ full }: { readonly full: boolean }) => (
@@ -22,7 +27,8 @@ const ExpandIcon = ({ full }: { readonly full: boolean }) => (
 )
 
 /** The task card: what to do, the "Перевірити" button and the result of each condition. */
-export const TaskPanel = ({ scenario, results, open, checking, selfCheck, full, onToggleFull, onNext, onToggle, onCheck, onReset }: Props) => {
+export const TaskPanel = ({ scenario, results, open, checking, selfCheck, full, onToggleFull, onNext, onToggle, onCheck, onReset, guideStep, guideOn, onToggleGuide }: Props) => {
+  const guide = scenario.guide ?? []
   const solved = results !== null && results.length > 0 && results.every((r) => r.ok)
   // Not a landmark (aside, header): a page can show several trainers, and their landmarks would have the same name.
   return (
@@ -46,11 +52,15 @@ export const TaskPanel = ({ scenario, results, open, checking, selfCheck, full, 
       </div>
       {open && (
         <>
-          <ol className="es-task-steps">
-            {scenario.task.map((step) => (
-              <li key={step}>{step}</li>
-            ))}
-          </ol>
+          {guideOn && guide.length > 0 ? (
+            <GuideSteps steps={guide} index={guideStep} />
+          ) : (
+            <ol className="es-task-steps">
+              {scenario.task.map((step) => (
+                <li key={step}>{step}</li>
+              ))}
+            </ol>
+          )}
           <p className="es-touch-hint">На телефоні: торкнися клітинки, щоб вибрати її, і двічі, щоб уводити текст.</p>
           <div className="es-task-actions">
             {selfCheck && (
@@ -61,6 +71,11 @@ export const TaskPanel = ({ scenario, results, open, checking, selfCheck, full, 
             <button type="button" className="es-reset" onClick={onReset}>
               Почати спочатку
             </button>
+            {guide.length > 0 && (
+              <button type="button" className="es-reset" aria-pressed={guideOn} onClick={onToggleGuide}>
+                {guideOn ? "Без підказок" : "З підказками"}
+              </button>
+            )}
           </div>
           {results !== null && (
             <div className={`es-results ${solved ? "is-solved" : ""}`} role="status">
