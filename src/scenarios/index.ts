@@ -77,6 +77,48 @@ const marathon: Scenario = {
     { type: "value", cells: "A2:A8", equals: [1, 2, 3, 4, 5, 6, 7], text: "Дні пронумеровано від 1 до 7" },
     { type: "style", cells: "A1:C1", style: { bold: true, fill: "*", align: "center" } },
     { type: "width", column: "B", min: 250 }
+  ],
+  guide: [
+    {
+      text: "Натисни на клітинку A2, введи 1 і натисни Enter. У клітинку A3 так само введи 2.",
+      target: { cells: "A2:A3" },
+      done: { goal: { type: "value", cells: "A2:A3", equals: [1, 2] } }
+    },
+    {
+      text: "Виділи клітинки A2 і A3: натисни на A2 і, не відпускаючи, протягни до A3.",
+      target: { cells: "A2:A3" },
+      done: { select: "A2:A3" }
+    },
+    {
+      text: "Візьмися за маленький квадратик у правому нижньому куті виділення і потягни його вниз до A8.",
+      target: { cells: "A2:A8" },
+      done: { goal: { type: "value", cells: "A2:A8", equals: [1, 2, 3, 4, 5, 6, 7] } }
+    },
+    {
+      text: "Виділи заголовки: натисни на A1 і протягни до C1.",
+      target: { cells: "A1:C1" },
+      done: { select: "A1:C1" }
+    },
+    {
+      text: "Натисни кнопку «Жирний» (Ж).",
+      target: { command: "sheet.command.set-range-bold" },
+      done: { goal: { type: "style", cells: "A1:C1", style: { bold: true } } }
+    },
+    {
+      text: "Залий заголовки кольором: натисни на відерце з фарбою. Стрілочка поруч відкриває інші кольори.",
+      target: { command: "sheet.command.set-background-color" },
+      done: { goal: { type: "style", cells: "A1:C1", style: { fill: "*" } } }
+    },
+    {
+      text: "Вирівняй заголовки по центру: відкрий «Вирівнювання по горизонталі» і вибери «По центру». Якщо кнопки не видно, вона в меню ⋮.",
+      target: { command: "sheet.command.set-horizontal-text-align" },
+      done: { goal: { type: "style", cells: "A1:C1", style: { align: "center" } } }
+    },
+    {
+      text: "Розшир стовпець B: наведи на праву межу заголовка B і потягни її вправо, доки назву книжки не буде видно повністю.",
+      target: { cells: "B1" },
+      done: { goal: { type: "width", column: "B", min: 250 } }
+    }
   ]
 }
 

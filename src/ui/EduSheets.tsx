@@ -4,7 +4,7 @@ import { UniverSheetsCorePreset } from "@univerjs/preset-sheets-core"
 import { UniverSheetsFilterPreset } from "@univerjs/preset-sheets-filter"
 import { UniverSheetsSortPreset } from "@univerjs/preset-sheets-sort"
 import { createUniver } from "@univerjs/presets"
-import { useCallback, useEffect, useRef, useState } from "react"
+import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { checkGoals, type GoalResult } from "../core/goals.ts"
 import { toUniverData } from "../core/univer-data.ts"
 import { buildWorkbook, type WorkbookState } from "../core/workbook.ts"
@@ -12,6 +12,8 @@ import type { Scenario } from "../scenarios/types.ts"
 import { UK_LOCALE, ukLocales } from "./locale/index.ts"
 import { watchBodyPortals } from "./body-portals.ts"
 import { useFullScreen } from "./fullscreen.ts"
+import { GuideLayer } from "./guide/GuideLayer.tsx"
+import { useGuide } from "./guide/use-guide.ts"
 import { TaskPanel } from "./TaskPanel.tsx"
 import { isTouchDevice, keepKeyboardForEditing } from "./touch-keyboard.ts"
 import { fixUkrainianInput, readWorkbook, type SheetsAPI } from "./univer-bridge.ts"
@@ -61,13 +63,20 @@ export const EduSheets = ({ scenario, onCheck, onChange, initialWorkbook, selfCh
   // A new value builds the table again from the scenario start («Почати спочатку»).
   const [round, setRound] = useState(0)
   const { full, toggle: toggleFull } = useFullScreen()
-  // Another exercise: the results of the old one go, and its task opens.
+  // The guide runs over the Univer of this round; a new one (another exercise, a restart) starts it again.
+  const [univer, setUniver] = useState<SheetsAPI | null>(null)
+  const [sheetBox, setSheetBox] = useState<HTMLDivElement | null>(null)
+  const [guideOn, setGuideOn] = useState(true)
+  // Another exercise: the results of the old one go, its task opens, and its guide is on.
   const [shown, setShown] = useState(scenario.id)
   if (shown !== scenario.id) {
     setShown(scenario.id)
     setResults(null)
     setTaskOpen(true)
+    setGuideOn(true)
   }
+  const startTable = useMemo(() => buildWorkbook(scenario.start), [scenario])
+  const guide = useGuide({ api: univer, sheet: sheetBox, steps: scenario.guide ?? [], on: guideOn && taskOpen, start: startTable })
 
   // Refs, so a new callback on every render of the page does not rebuild the table.
   const changed = useRef(onChange)
@@ -98,6 +107,7 @@ export const EduSheets = ({ scenario, onCheck, onChange, initialWorkbook, selfCh
     const start = saved ?? buildWorkbook(scenario.start)
     univerAPI.createWorkbook(toUniverData(start))
     api.current = univerAPI
+    setUniver(univerAPI)
 
     let timer: ReturnType<typeof setTimeout> | undefined
     // Univer runs some mutations of its own while it starts; the page hears only about real changes of the table.
@@ -130,6 +140,7 @@ export const EduSheets = ({ scenario, onCheck, onChange, initialWorkbook, selfCh
       onEditEnd.dispose()
       keyboard?.dispose()
       api.current = null
+      setUniver(null)
       portals.stop()
       // Univer renders with its own React root; unmounting it while this page renders breaks React.
       setTimeout(() => {
@@ -147,13 +158,18 @@ export const EduSheets = ({ scenario, onCheck, onChange, initialWorkbook, selfCh
     if (current === null) return
     setChecking(true)
     try {
-      const found = await checkGoals(buildWorkbook(scenario.start), readWorkbook(current), scenario.goals)
+      const found = await checkGoals(startTable, readWorkbook(current), scenario.goals)
       setResults(found)
       checked.current?.(found.length > 0 && found.every((r) => r.ok))
     } finally {
       setChecking(false)
     }
-  }, [scenario])
+  }, [scenario, startTable])
+
+  const sheetRef = useCallback((el: HTMLDivElement | null) => {
+    host.current = el
+    setSheetBox(el)
+  }, [])
 
   const reset = useCallback(() => {
     setResults(null)
@@ -175,8 +191,15 @@ export const EduSheets = ({ scenario, onCheck, onChange, initialWorkbook, selfCh
           onToggle={() => setTaskOpen((v) => !v)}
           onCheck={() => void check()}
           onReset={reset}
+          guideStep={guide.index}
+          guideOn={guideOn}
+          onToggleGuide={() => setGuideOn((v) => !v)}
         />
-        <div className="es-sheet" ref={host} />
+        <div
+          className="es-sheet"
+          ref={sheetRef}
+        />
+        <GuideLayer area={guide.area} target={guide.target} />
       </div>
     </div>
   )
