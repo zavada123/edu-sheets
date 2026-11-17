@@ -66,16 +66,6 @@
   font-weight: 600;
 }
 
-.es-grade {
-  padding: 2px 8px;
-  border-radius: 10px;
-  background: #e8f0fe;
-  color: var(--es-accent);
-  font-size: 12px;
-  font-weight: 600;
-  white-space: nowrap;
-}
-
 .es-task-toggle {
   width: 32px;
   height: 32px;
@@ -189,8 +179,7 @@
     flex-direction: column-reverse;
   }
 
-  .es-task:not(.is-open) h2,
-  .es-task:not(.is-open) .es-grade {
+  .es-task:not(.is-open) h2 {
     display: none;
   }
 }
@@ -372,7 +361,7 @@ html.es-page-full {
     transition: none;
   }
 }
-/* Catalog of exercises: cards grouped by grade. Classes start with `es-cat-` so the catalog can live inside any page. */
+/* Catalog of exercises: cards grouped by topic. Classes start with `es-cat-` so the catalog can live inside any page. */
 
 .es-cat {
   --es-cat-accent: #188038;

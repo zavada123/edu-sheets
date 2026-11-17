@@ -34,7 +34,6 @@ export const TaskPanel = ({ scenario, results, open, checking, selfCheck, full, 
   return (
     <div className={`es-task ${open ? "is-open" : ""}`}>
       <div className="es-task-head">
-        {scenario.grade > 0 && <span className="es-grade">{scenario.grade} клас</span>}
         <h2>{scenario.title}</h2>
         <button
           type="button"
