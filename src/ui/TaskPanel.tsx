@@ -1,6 +1,7 @@
 import type { GoalResult } from "../core/goals.ts"
 import type { Scenario } from "../scenarios/types.ts"
 import { GuideSteps } from "./guide/GuideSteps.tsx"
+import { RichText } from "./RichText.tsx"
 
 interface Props {
   readonly scenario: Scenario
@@ -56,7 +57,9 @@ export const TaskPanel = ({ scenario, results, open, checking, selfCheck, full, 
           ) : (
             <ol className="es-task-steps">
               {scenario.task.map((step) => (
-                <li key={step}>{step}</li>
+                <li key={step}>
+                  <RichText text={step} />
+                </li>
               ))}
             </ol>
           )}
@@ -82,8 +85,12 @@ export const TaskPanel = ({ scenario, results, open, checking, selfCheck, full, 
               <ul>
                 {results.map((r) => (
                   <li key={r.text} className={r.ok ? "is-ok" : "is-bad"}>
-                    <span aria-hidden="true">{r.ok ? "✅" : "❌"}</span> {r.text}
-                    {!r.ok && r.hint !== "" && <small>{r.hint}</small>}
+                    <span aria-hidden="true">{r.ok ? "✅" : "❌"}</span> <RichText text={r.text} />
+                    {!r.ok && r.hint !== "" && (
+                      <small>
+                        <RichText text={r.hint} />
+                      </small>
+                    )}
                   </li>
                 ))}
               </ul>

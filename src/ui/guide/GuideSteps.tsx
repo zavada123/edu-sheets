@@ -1,5 +1,6 @@
 import { useEffect, useRef } from "react"
 import type { GuideStep } from "../../scenarios/types.ts"
+import { RichText } from "../RichText.tsx"
 
 interface Props {
   readonly steps: ReadonlyArray<GuideStep>
@@ -27,7 +28,9 @@ export const GuideSteps = ({ steps, index }: Props) => {
               <span className="es-guide-mark" aria-hidden="true">
                 {i < index ? "✓" : i + 1}
               </span>
-              <span>{step.text}</span>
+              <span>
+                <RichText text={step.text} />
+              </span>
             </li>
           )
         })}

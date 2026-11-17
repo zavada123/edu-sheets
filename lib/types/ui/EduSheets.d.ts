@@ -5,6 +5,7 @@ import "@univerjs/preset-sheets-sort/lib/index.css";
 import "@univerjs/preset-sheets-filter/lib/index.css";
 import "@univerjs/preset-sheets-conditional-formatting/lib/index.css";
 import "./sheets.css";
+import "./rich-text.css";
 interface Props {
     /**
      * Another scenario builds the table again from its start. A page that keeps the trainer for the next exercise keeps
