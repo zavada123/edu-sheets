@@ -1,4 +1,4 @@
-import type { Scenario } from "../scenarios/types.ts";
+import { type Scenario } from "../scenarios/types.ts";
 import "./catalog.css";
 interface Props {
     readonly scenarios: ReadonlyArray<Scenario>;
@@ -10,6 +10,6 @@ interface Props {
     /** Name of the list for screen readers. */
     readonly label?: string;
 }
-/** The exercises as cards, grouped by grade: topic, the situation, the skills and a check mark for solved ones. */
+/** The exercises as cards, grouped by topic: topic, the situation, the skills and a check mark for solved ones. */
 export declare const TaskCatalog: ({ scenarios, solved, current, onPick, label }: Props) => import("react").JSX.Element;
 export {};

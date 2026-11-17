@@ -1,22 +1,22 @@
 import { describe, expect, it } from "vitest"
 import { scenarios } from "../scenarios/index.ts"
 import type { Scenario } from "../scenarios/types.ts"
-import { gradeGroups, nextScenario, summaryOf, topicName } from "./catalog-groups.ts"
+import { topicGroups, nextScenario, summaryOf, topicName } from "./catalog-groups.ts"
 
 const make = (id: string, grade: number, extra: Partial<Scenario> = {}): Scenario => ({ id, grade, title: id, task: [`Крок ${id}`], start: [], goals: [], ...extra })
 
-describe("gradeGroups", () => {
-  it("groups exercises by grade in ascending order and counts the solved ones", () => {
+describe("topicGroups", () => {
+  it("groups exercises by topic in the catalog order, mixes grades, and counts the solved ones", () => {
     // Arrange
-    const list = [make("b", 8), make("a", 6), make("c", 8)]
+    const list = [make("a", 6, { topic: "format" }), make("b", 8, { topic: "formulas" }), make("c", 6, { topic: "formulas" })]
 
     // Act
-    const groups = gradeGroups(list, ["c"])
+    const groups = topicGroups(list, ["c"])
 
     // Assert
-    expect(groups.map((g) => [g.grade, g.items.map((s) => s.id), g.done])).toEqual([
-      [6, ["a"], 0],
-      [8, ["b", "c"], 1]
+    expect(groups.map((g) => [g.topic, g.items.map((s) => s.id), g.done])).toEqual([
+      ["formulas", ["b", "c"], 1],
+      ["format", ["a"], 0]
     ])
   })
 

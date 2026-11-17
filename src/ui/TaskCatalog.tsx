@@ -1,5 +1,5 @@
-import type { Scenario } from "../scenarios/types.ts"
-import { gradeGroups, summaryOf, topicName, topicOf } from "./catalog-groups.ts"
+import { TOPIC_NAMES, type Scenario } from "../scenarios/types.ts"
+import { summaryOf, topicGroups, topicName, topicOf } from "./catalog-groups.ts"
 import "./catalog.css"
 
 interface Props {
@@ -15,9 +15,9 @@ interface Props {
 
 const percent = (done: number, total: number): number => (total === 0 ? 0 : Math.round((done / total) * 100))
 
-/** The exercises as cards, grouped by grade: topic, the situation, the skills and a check mark for solved ones. */
+/** The exercises as cards, grouped by topic: topic, the situation, the skills and a check mark for solved ones. */
 export const TaskCatalog = ({ scenarios, solved, current, onPick, label = "Вправи з електронних таблиць" }: Props) => {
-  const groups = gradeGroups(scenarios, solved)
+  const groups = topicGroups(scenarios, solved)
   const done = groups.reduce((n, g) => n + g.done, 0)
   let number = 0
   return (
@@ -31,9 +31,9 @@ export const TaskCatalog = ({ scenarios, solved, current, onPick, label = "Вп�
         </span>
       </div>
       {groups.map((g) => (
-        <section key={g.grade} className="es-cat-group" aria-labelledby={`es-cat-grade-${g.grade}`}>
+        <section key={g.topic} className="es-cat-group" aria-labelledby={`es-cat-topic-${g.topic}`}>
           <div className="es-cat-head">
-            <h3 id={`es-cat-grade-${g.grade}`}>{g.grade > 0 ? `${g.grade} клас` : "Вправи"}</h3>
+            <h3 id={`es-cat-topic-${g.topic}`}>{TOPIC_NAMES[g.topic]}</h3>
             <span className="es-cat-progress">
               {g.done} з {g.items.length}
             </span>
