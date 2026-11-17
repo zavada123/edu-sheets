@@ -112,7 +112,7 @@ export const describeGoal = (goal: Goal): string => {
         ? `У ${cellsLabel(goal.cells)} правильні значення`
         : `У ${cellsLabel(goal.cells)} значення ${formatValue(goal.equals)}`
     case "formula":
-      return `У ${cellsLabel(goal.cells)} ${isOneCell(goal.cells) ? "формула" : "формули"}${goal.functions?.length ? ` з функцією ${goal.functions.join(", ")}` : ""}`
+      return `У ${cellsLabel(goal.cells)} ${isOneCell(goal.cells) ? "формула" : "формули"}${goal.functions?.length ? ` з функцією ${goal.functions.map((f) => `\`${f}\``).join(", ")}` : ""}`
     case "recalc":
       return `Формули в ${cellsLabel(goal.cells)} перераховуються, коли змінюються дані`
     case "style":
@@ -158,11 +158,11 @@ const wrongFormula = (book: WorkbookState, goal: Goal & { readonly type: "formul
   for (const cell of cellsIn(goal.cells)) {
     const input = cellOf(sheet, cell)?.input
     if (input === undefined || input === "") return `Клітинка ${cell} порожня.`
-    if (!isFormula(input)) return `У ${cell} записано значення, а потрібна формула. Формула починається зі знака =.`
+    if (!isFormula(input)) return `У ${cell} записано значення, а потрібна формула. Формула починається зі знака \`=\`.`
     if (goal.refs !== false && refsIn(input).size === 0) return `Формула в ${cell} не використовує адрес клітинок, тому не перерахується, коли зміняться дані.`
     const used = functionsIn(input)
     const missing = (goal.functions ?? []).find((f) => !used.has(f.toUpperCase()))
-    if (missing !== undefined) return `У формулі в ${cell} немає функції ${missing}.`
+    if (missing !== undefined) return `У формулі в ${cell} немає функції \`${missing}\`.`
   }
   return null
 }
@@ -266,10 +266,10 @@ const problemOf = async (goal: Goal, final: WorkbookState, computed: Computed, s
     case "width": {
       const sheet = findSheet(final, goal.sheet)
       const width = sheet?.widths?.[goal.column.toUpperCase()] ?? DEFAULT_WIDTH
-      return width >= goal.min ? null : `Розшир стовпець ${goal.column}: перетягни праву межу його заголовка.`
+      return width >= goal.min ? null : `Розшир стовпець ${goal.column}: перетягни праву межу його заголовка (букви над стовпцем).`
     }
     case "sheet":
-      return final.sheets.some((s) => s.name.trim() === goal.name) ? null : `Аркуша «${goal.name}» немає. Двічі клацни на назві аркуша внизу, щоб її змінити.`
+      return final.sheets.some((s) => s.name.trim() === goal.name) ? null : `Аркуша «${goal.name}» немає. Двічі клацни на **назві аркуша** внизу, щоб її змінити.`
   }
 }
 

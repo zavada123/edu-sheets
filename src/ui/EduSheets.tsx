@@ -22,6 +22,7 @@ import "@univerjs/preset-sheets-sort/lib/index.css"
 import "@univerjs/preset-sheets-filter/lib/index.css"
 import "@univerjs/preset-sheets-conditional-formatting/lib/index.css"
 import "./sheets.css"
+import "./rich-text.css"
 
 /** Protection belongs to shared documents with owners; a student's own table has none. */
 const HIDDEN_MENUS = {
