@@ -74,9 +74,9 @@ const listOf = (cells: Cells): ReadonlyArray<string> => (typeof cells === "strin
 
 const isOneCell = (cells: Cells): boolean => listOf(cells).length === 1 && !(listOf(cells)[0] ?? "").includes(":")
 
-const cellsLabel = (cells: Cells): string => `${isOneCell(cells) ? "клітинці" : "клітинках"} ${listOf(cells).join(", ")}`
+const cellsLabel = (cells: Cells): string => `${isOneCell(cells) ? "клітинці" : "клітинках"} ${listOf(cells).map((c) => `\`${c}\``).join(", ")}`
 
-const cellsLabelNom = (cells: Cells): string => `${isOneCell(cells) ? "Клітинка" : "Клітинки"} ${listOf(cells).join(", ")}`
+const cellsLabelNom = (cells: Cells): string => `${isOneCell(cells) ? "Клітинка" : "Клітинки"} ${listOf(cells).map((c) => `\`${c}\``).join(", ")}`
 
 export const formatValue = (value: CellValue): string => {
   if (value === null) return "порожньо"
@@ -120,9 +120,9 @@ export const describeGoal = (goal: Goal): string => {
     case "filled":
       return `${cellsLabelNom(goal.cells)} заповнено`
     case "sorted":
-      return `Рядки ${goal.range} упорядковано за стовпцем ${goal.by} ${goal.order === "desc" ? "за спаданням" : "за зростанням"}`
+      return `Рядки \`${goal.range}\` упорядковано за стовпцем \`${goal.by}\` ${goal.order === "desc" ? "за спаданням" : "за зростанням"}`
     case "width":
-      return `Стовпець ${goal.column} досить широкий, щоб усе було видно`
+      return `Стовпець \`${goal.column}\` досить широкий, щоб усе було видно`
     case "sheet":
       return `Є аркуш «${goal.name}»`
   }
@@ -148,7 +148,7 @@ const wrongValue = (
   const cells = cellsIn(goal.cells)
   for (const [i, cell] of cells.entries()) {
     const actual = computed.value(cell, goal.sheet)
-    if (!sameValue(actual, expectedAt(goal.equals, i), goal.tolerance)) return `У ${cell} зараз ${formatValue(actual)}.`
+    if (!sameValue(actual, expectedAt(goal.equals, i), goal.tolerance)) return `У \`${cell}\` зараз ${formatValue(actual)}.`
   }
   return cells.length === 0 ? "Завдання вказує неправильні клітинки." : null
 }
@@ -157,12 +157,12 @@ const wrongFormula = (book: WorkbookState, goal: Goal & { readonly type: "formul
   const sheet = findSheet(book, goal.sheet)
   for (const cell of cellsIn(goal.cells)) {
     const input = cellOf(sheet, cell)?.input
-    if (input === undefined || input === "") return `Клітинка ${cell} порожня.`
-    if (!isFormula(input)) return `У ${cell} записано значення, а потрібна формула. Формула починається зі знака \`=\`.`
-    if (goal.refs !== false && refsIn(input).size === 0) return `Формула в ${cell} не використовує адрес клітинок, тому не перерахується, коли зміняться дані.`
+    if (input === undefined || input === "") return `Клітинка \`${cell}\` порожня.`
+    if (!isFormula(input)) return `У \`${cell}\` записано значення, а потрібна формула. Формула починається зі знака \`=\`.`
+    if (goal.refs !== false && refsIn(input).size === 0) return `Формула в \`${cell}\` не використовує адрес клітинок, тому не перерахується, коли зміняться дані.`
     const used = functionsIn(input)
     const missing = (goal.functions ?? []).find((f) => !used.has(f.toUpperCase()))
-    if (missing !== undefined) return `У формулі в ${cell} немає функції \`${missing}\`.`
+    if (missing !== undefined) return `У формулі в \`${cell}\` немає функції \`${missing}\`.`
   }
   return null
 }
@@ -179,7 +179,7 @@ const wrongStyle = (book: WorkbookState, goal: Goal & { readonly type: "style" }
       const have = style[key] ?? (typeof want === "boolean" ? false : undefined)
       const same =
         want === ANY ? have !== undefined : typeof want === "string" && typeof have === "string" ? want.toLowerCase() === have.toLowerCase() : want === have
-      if (!same) return `У ${cell} ще немає: ${styleWords({ [key]: want })}.`
+      if (!same) return `У \`${cell}\` ще немає: ${styleWords({ [key]: want })}.`
     }
   }
   return null
@@ -251,7 +251,7 @@ const problemOf = async (goal: Goal, final: WorkbookState, computed: Computed, s
       const changed = await compute(withInputs(final, goal.sheet, goal.set))
       const wrong = wrongValue(changed, goal)
       const data = Object.entries(goal.set)
-        .map(([cell, v]) => `${cell} = ${formatValue(v as CellValue)}`)
+        .map(([cell, v]) => `\`${cell}\` = ${formatValue(v as CellValue)}`)
         .join(", ")
       return wrong === null ? null : `Якщо ${data}, формула дає неправильний результат. ${wrong}`
     }
@@ -266,7 +266,7 @@ const problemOf = async (goal: Goal, final: WorkbookState, computed: Computed, s
     case "width": {
       const sheet = findSheet(final, goal.sheet)
       const width = sheet?.widths?.[goal.column.toUpperCase()] ?? DEFAULT_WIDTH
-      return width >= goal.min ? null : `Розшир стовпець ${goal.column}: перетягни праву межу його заголовка (букви над стовпцем).`
+      return width >= goal.min ? null : `Розшир стовпець \`${goal.column}\`: перетягни праву межу його заголовка (букви над стовпцем).`
     }
     case "sheet":
       return final.sheets.some((s) => s.name.trim() === goal.name) ? null : `Аркуша «${goal.name}» немає. Двічі клацни на **назві аркуша** внизу, щоб її змінити.`
