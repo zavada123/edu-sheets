@@ -24,7 +24,7 @@ describe("goals", () => {
   })
 
   it("value: says what the cell shows now", async () => {
-    expect(await hintOf({ C4: "=B4*B2" }, { type: "value", cells: "C4", equals: 2700 })).toBe("У C4 зараз 0.")
+    expect(await hintOf({ C4: "=B4*B2" }, { type: "value", cells: "C4", equals: 2700 })).toBe("У `C4` зараз 0.")
   })
 
   it("recalc: a copied formula without $ fails when the rate changes", async () => {
@@ -38,7 +38,7 @@ describe("goals", () => {
     const book = buildWorkbook([{ cells: { A1: { input: "Ціна", style: { fill: "#ff0000", bold: true } } } }])
     const [ok] = await checkGoals(book, book, [{ type: "style", cells: "A1", style: { fill: "*", bold: true } }])
     const [bad] = await checkGoals(book, book, [{ type: "style", cells: "A1", style: { italic: true } }])
-    expect([ok?.ok, bad?.ok, bad?.hint]).toEqual([true, false, "У A1 ще немає: курсив."])
+    expect([ok?.ok, bad?.ok, bad?.hint]).toEqual([true, false, "У `A1` ще немає: курсив."])
   })
 
   it("sorted: sorting one column alone splits the rows", async () => {
